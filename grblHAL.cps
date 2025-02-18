@@ -13,6 +13,10 @@
 /*
 Add change notes here!!!! DO NOT FORGET OR YOU WILL FORGET
 
+18.02.25
+1. Improved return position behaviour and code generation
+2. Added initial positioning move option
+
 30.09.24
 1. Added sanitycheck for Air while misting
 2. Improved SpindleDelay code
@@ -82,6 +86,14 @@ properties = {
     value: "G28",
     scope: "post"
   },
+  initPositioning: {
+    title: "Initial positioning in G28",
+    description: "Always use G28 for the first toolpath positioning.",
+    group: "Safety",
+    type: "boolean",
+    value: true,
+    scope: "post"
+  },
   returnPosition: {
     title: "Return Position",
     description: "Select the desired position the machine returns to after a job is finished.",
@@ -89,10 +101,11 @@ properties = {
     type: "enum",
     values: [
       {title: "Disabled", id: "none"},
+      {title: "Current WCS X0Y0", id: "WCS"},
       {title: "G28 Z0", id: "G28Z"},
-      {title: "G28 Z0 then X0Y0", id: "G28XYZ"},
+      {title: "G28 Z0, then X0Y0", id: "G28XYZ"},
       {title: "G30 Z0", id: "G30Z"},
-      {title: "G30 Z0 then X0Y0", id: "G30XYZ"}
+      {title: "G30 Z0, then X0Y0", id: "G30XYZ"},
     ],
     value: "none",
     scope: "post"
@@ -717,9 +730,11 @@ function onSection() {
   var splitHere = getProperty("splitFile") == "toolpath" || (getProperty("splitFile") == "tool" && insertToolCall);
   
   retracted = false; // specifies that the tool has been retracted to the safe plane
+
   var newWorkOffset = isFirstSection() ||
     (getPreviousSection().workOffset != currentSection.workOffset) ||
     splitHere; // work offset changes
+
   var newWorkPlane = isFirstSection() ||
     !isSameDirection(getPreviousSection().getGlobalFinalToolAxis(), currentSection.getGlobalInitialToolAxis()) ||
     (currentSection.isOptimizedForMachine() && getPreviousSection().isOptimizedForMachine() &&
@@ -728,13 +743,18 @@ function onSection() {
     (!getPreviousSection().isMultiAxis() && currentSection.isMultiAxis() ||
       getPreviousSection().isMultiAxis() && !currentSection.isMultiAxis()) ||
       splitHere; // force newWorkPlane between indexing and simultaneous operations
+
   if (insertToolCall || newWorkOffset || newWorkPlane) {
-    // stop spindle before retract during tool change
     if (insertToolCall && !isFirstSection()) {
-      onCommand(COMMAND_STOP_SPINDLE);
+      onCommand(COMMAND_STOP_SPINDLE);    // stop spindle before retract during tool change
     }
     if (getProperty("splitFile") == "none" || isRedirecting()) {
+      if (isFirstSection() && getProperty("initPositioning")) {
+        writeBlock(gFormat.format(28), gAbsIncModal.format(91), "Z0");
+        writeBlock(gAbsIncModal.format(90));
+      } else {
       writeRetract(Z);
+      }
     }
   }
 
@@ -743,7 +763,7 @@ function onSection() {
   if (splitHere) {
     if (!isFirstSection()) {
       setCoolant(COOLANT_OFF);
-    
+
       writeRetract(X, Y);
     
       onImpliedCommand(COMMAND_END);
@@ -1554,19 +1574,22 @@ function getCoolantCodes(coolant) {
 }
 
 function onClose() {
+  var RetractPosition = getProperty("safePositionMethod");
   writeRetract(Z);
-  writeRetract(X, Y);
   setCoolant(COOLANT_OFF);
-  onImpliedCommand(COMMAND_END);
   onCommand(COMMAND_STOP_SPINDLE);
 
   switch (getProperty("returnPosition")) {
     case "G28Z":
+      if (!(RetractPosition == "G28" || RetractPosition == "G53")) {
       writeBlock(gFormat.format(28), gAbsIncModal.format(91), "Z0");
       writeBlock(gAbsIncModal.format(90));
+      }
       break;
     case "G28XYZ":
+      if (!(RetractPosition == "G28" || RetractPosition == "G53")) {
       writeBlock(gFormat.format(28), gAbsIncModal.format(91), "Z0");
+      }
       writeBlock(gFormat.format(28), gAbsIncModal.format(91), "X0 Y0");
       writeBlock(gAbsIncModal.format(90));
       break;
@@ -1579,7 +1602,11 @@ function onClose() {
       writeBlock(gFormat.format(30), gAbsIncModal.format(91), "X0 Y0");
       writeBlock(gAbsIncModal.format(90));
       break;
+    case "WCS":
+      writeBlock(gMotionModal.format(0), gAbsIncModal.format(90), "X0 Y0");
+      break;
   }
+  onImpliedCommand(COMMAND_END);
   writeBlock(mFormat.format(30)); // stop program, spindle stop, coolant off
   if (isRedirecting()) {
     closeRedirection();
