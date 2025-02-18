@@ -3,6 +3,12 @@ Experimental grblHAL post processor with canned cycles and 4th axis support for 
 
 Added features and modifications:
 
+18.02.25
+1. Improved return position behaviour and code generation
+2. Added initial positioning move option
+   
+![image](https://github.com/Dietz0r/grblHAL_Fusion360_Post_Processor/blob/main/PPOptions.png)
+
 30.09.24
 1. Added sanitycheck for Air while Misting
 2. Improved SpindleDelay code
