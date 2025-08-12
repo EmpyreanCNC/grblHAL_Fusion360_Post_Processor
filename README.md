@@ -3,6 +3,17 @@ Experimental grblHAL post processor with canned cycles and 4th axis support for 
 
 Added features and modifications:
 
+12.08.2025
+
+Added the ability to enable/disable arc generation in outputted code to prevent the following error in IOsender when using Gcode Rotate. This option is heavily affected by (Built-in) Tolerance value
+
+<img width="539" height="220" alt="image" src="https://github.com/user-attachments/assets/df7246e3-9822-4d4c-b5c3-72af9e2280f6" />
+
+<img width="642" height="746" alt="image" src="https://github.com/user-attachments/assets/7382f129-2440-4f7f-b546-7b80f621c568" />
+
+
+
+
 18.02.25
 1. Improved return position behaviour and code generation
 2. Added initial positioning move option
