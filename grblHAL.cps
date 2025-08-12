@@ -292,7 +292,7 @@ properties = {
 };
 
 groupDefinitions = {
- Safety: {title: "Saftey Settings", description: "Settings for safe operation", collapsed: false, order:5},
+ Safety: {title: "Safety Settings", description: "Settings for safe operation", collapsed: false, order:5},
  Coolant: {title: "Coolant Mapping", description: "Define Machinecodes for Coolant", collapsed: true, order:25}
 };
 
@@ -1737,4 +1737,5 @@ function setWorkPlane(abc) {
   setCurrentABC(abc); // required for machine simulation
 }
 // <<<<< INCLUDED FROM ../common/grbl.cps
+
 
