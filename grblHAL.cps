@@ -12,6 +12,8 @@
 
 /*
 Add change notes here!!!! DO NOT FORGET OR YOU WILL FORGET
+12.08.25
+1. Added Option to enable/disable arc generation
 
 18.02.25
 1. Improved return position behaviour and code generation
@@ -1737,5 +1739,6 @@ function setWorkPlane(abc) {
   setCurrentABC(abc); // required for machine simulation
 }
 // <<<<< INCLUDED FROM ../common/grbl.cps
+
 
 
