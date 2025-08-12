@@ -282,6 +282,13 @@ properties = {
     value: true,
     scope: "post"
   },
+  useCircularInterpolation: {
+    title      : "Circular Interpolation",
+    description: "Output arcs as linear moves when set to No.",
+    type       : "boolean",
+    value      : false,
+    scope      : "post"
+  }
 };
 
 groupDefinitions = {
@@ -415,7 +422,9 @@ function onOpen() {
     setMachineConfiguration(machineConfiguration);
     optimizeMachineAngles2(1); // TCP mode
   }*/
-
+  if (getProperty("useCircularInterpolation")) {
+    allowedCircularPlanes = undefined; // Allow circular interpolation in all three planes
+  }
   if (getProperty("fourthAxisAround") != "none") {
     var aAxis = createAxis({
       coordinate:0,
@@ -1728,3 +1737,4 @@ function setWorkPlane(abc) {
   setCurrentABC(abc); // required for machine simulation
 }
 // <<<<< INCLUDED FROM ../common/grbl.cps
+
