@@ -55,7 +55,7 @@ maximumCircularRadius = spatial(1000, MM);
 minimumCircularSweep = toRad(0.01);
 maximumCircularSweep = toRad(180);
 allowHelicalMoves = true;
-allowedCircularPlanes = undefined; // (1 << PLANE_XY) | (1 << PLANE_ZX) | (1 << PLANE_YZ) - allow any circular motion
+allowedCircularPlanes = 0; // (1 << PLANE_XY) | (1 << PLANE_ZX) | (1 << PLANE_YZ) - allow any circular motion
 
 // user-defined properties
 properties = {
@@ -1739,6 +1739,7 @@ function setWorkPlane(abc) {
   setCurrentABC(abc); // required for machine simulation
 }
 // <<<<< INCLUDED FROM ../common/grbl.cps
+
 
 
 
