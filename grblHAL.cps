@@ -286,7 +286,7 @@ properties = {
   },
   useCircularInterpolation: {
     title      : "Circular Interpolation",
-    description: "Output arcs as linear moves when set to No.",
+    description: "Allow use of G2 / G3 arc commands",
     type       : "boolean",
     value      : false,
     scope      : "post"
@@ -1739,6 +1739,7 @@ function setWorkPlane(abc) {
   setCurrentABC(abc); // required for machine simulation
 }
 // <<<<< INCLUDED FROM ../common/grbl.cps
+
 
 
 
