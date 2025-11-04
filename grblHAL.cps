@@ -285,8 +285,8 @@ properties = {
     scope: "post"
   },
   useCircularInterpolation: {
-    title      : "Circular Interpolation",
-    description: "Allow use of G2 / G3 arc commands",
+    title      : "Disable G2/G3 Arcs",
+    description: "Disable output of G2 and G3 Arc commands.\nUses linear circular interpolation instead.",
     type       : "boolean",
     value      : false,
     scope      : "post"
@@ -1739,6 +1739,7 @@ function setWorkPlane(abc) {
   setCurrentABC(abc); // required for machine simulation
 }
 // <<<<< INCLUDED FROM ../common/grbl.cps
+
 
 
 
